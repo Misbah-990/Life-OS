@@ -697,16 +697,7 @@ select option{background:var(--s2);}
     <button class="btn btn-g btn-sm" onclick="expTxt()">&#128203; Copy for Claude</button>
     <button class="btn btn-g btn-sm" onclick="expCSV()">&#128202; CSV</button>
   </div>
-  <div class="sync-banner">
-    <div class="sync-ico">📱</div>
-    <div class="sync-txt">
-      <strong>Cross-device sync</strong><br>
-      এই app locally (browser localStorage) data save করে — তাই phone ও PC-তে data আলাদা থাকবে।<br>
-      <strong>Sync করার উপায়:</strong> যেকোনো device-এ "Export Backup" করো → অন্য device-এ "Import Backup" করো।<br>
-      <strong>Pro tip:</strong> Google Drive / Telegram-এ backup file save করলে দুই device থেকেই access করা যাবে।<br>
-      Real-time sync-এর জন্য Firebase/Supabase integration দরকার — future upgrade হিসেবে সম্ভব।
-    </div>
-  </div>
+
 </div>
 
 <div class="page" id="page-settings">
@@ -792,26 +783,14 @@ select option{background:var(--s2);}
           <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.65rem">
             <button class="btn btn-sm" style="border:1px solid var(--red);color:var(--red);background:transparent" onclick="clearLogs()">🗑 Clear Logs Only</button>
             <button class="btn btn-sm" style="border:1px solid var(--red);color:var(--red);background:transparent" onclick="clearStudy()">🗑 Clear Study Plans</button>
+            <button class="btn btn-sm" style="border:1px solid var(--g2);color:var(--g2);background:transparent" onclick="resetJourney()">🔄 Reset Journey Day</button>
             <button class="btn btn-sm" style="border:2px solid var(--red);color:var(--red);background:rgba(247,106,106,0.07);font-weight:700" id="clr-btn" onclick="clearAll()">💥 Reset Everything</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Cross-device sync info -->
-    <div class="set-s">
-      <div class="set-sl">📱 Cross-Device Sync</div>
-      <div class="sync-banner" style="margin:0">
-        <div class="sync-ico">🔄</div>
-        <div class="sync-txt">
-          <strong>Phone ও PC-তে একই data রাখতে:</strong><br>
-          ১. যেকোনো device-এ Data Management → <strong>Export Backup</strong><br>
-          ২. JSON file টা Telegram-এ নিজেকে send করো<br>
-          ৩. অন্য device-এ খুলে <strong>Import Backup</strong> করো<br>
-          ✦ Real-time sync সম্ভব না — localStorage browser/device-specific।
-        </div>
-      </div>
-    </div>
+
 
   </div>
 </div>
@@ -1125,7 +1104,9 @@ function rToday() {
   const now = new Date();
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   document.getElementById('t-day').textContent = days[now.getDay()];
+  document.getElementById('t-day').style.cssText = 'color:var(--ac);text-shadow:0 0 24px rgba(124,106,247,0.7),0 0 48px rgba(124,106,247,0.3)';
   document.getElementById('nav-r').textContent = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  document.getElementById('nav-r').style.cssText = 'color:var(--ac);text-shadow:0 0 12px rgba(124,106,247,0.6);font-family:var(--mono);font-size:0.6rem';
   const tk = tKey(), tl = db.logs[tk] || {};
 
   // Overall day score
@@ -1146,7 +1127,7 @@ function rToday() {
     `<div style="font-size:1.8rem;font-weight:800;color:${scoreColor(ovScore)};line-height:1">${ovScore}%</div>
      <div style="font-size:0.53rem;font-family:var(--mono);color:var(--t4)">DAY SCORE</div>
      <div style="font-size:0.62rem;font-family:var(--mono);color:var(--t3);margin-top:0.2rem">${done100}/${db.habits.length} ✓</div>
-     ${db.jStart ? `<div style="font-size:0.52rem;font-family:var(--mono);color:var(--t4);margin-top:0.05rem">DAY ${dayN(tk)}</div>` : ''}`;
+     ${db.jStart ? `<div style="font-size:0.52rem;font-family:var(--mono);color:var(--g2);text-shadow:0 0 10px rgba(247,194,106,0.8);margin-top:0.05rem;letter-spacing:0.08em">DAY ${dayN(tk)}</div>` : ''}`;
 
   // Rings — by category using catScore
   const cats = [...new Set(db.habits.map(h => h.cat))];
@@ -1835,6 +1816,11 @@ function clearStudy(){
   if(!confirm('সব study plans delete করবে? Habit logs থাকবে। Backup নেওয়া হবে।'))return;
   expJSON();
   setTimeout(()=>{db.dp={};sv();rSet();toast('🗑 Study plans cleared — backup downloaded!');},300);
+}
+function resetJourney(){
+  if(!confirm('Journey Day counter reset করবে? আজ থেকে DAY 001 শুরু হবে। Data মুছবে না।'))return;
+  db.jStart=tKey();sv();rToday();rSet();
+  toast('🔄 Journey reset — আজ থেকে DAY 001!');
 }
 
 let _dangerClicks=0,_dangerTimer=null;
