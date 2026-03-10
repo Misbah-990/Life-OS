@@ -910,13 +910,13 @@ const PRAYS=[
 function tKey(){return new Date().toISOString().split('T')[0];}
 function dKey(d){return d.toISOString().split('T')[0];}
 function dAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d;}
-function fmtD(k){return new Date(k+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});}
+function fmtD(k){return new Date(k+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});}
 function dayN(k){
   if(!db.jStart)return '—';
-  const diff=Math.floor((new Date(k+'T12:00:00')-new Date(db.jStart+'T12:00:00'))/86400000)+1;
+  const diff=Math.floor((new Date(k+'T00:00:00')-new Date(db.jStart+'T00:00:00'))/86400000)+1;
   return diff>0?String(diff).padStart(3,'0'):'—';
 }
-function wday(k){return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date(k+'T12:00:00').getDay()];}
+function wday(k){return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date(k+'T00:00:00').getDay()];}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function gv(id){const e=document.getElementById(id);return e?e.value:'';}
 function sv2(id,v){const e=document.getElementById(id);if(e)e.value=v;}
